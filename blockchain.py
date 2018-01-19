@@ -40,8 +40,8 @@ class Blockchain:
 
         while current_index < len(chain):
             block = chain[current_index]
-            print(f'{last_block}')
-            print(f'{block}')
+            print('{last_block}')
+            print('{block}')
             print("\n-----------\n")
             # Check that the hash of the block is correct
             if block['previous_hash'] != self.hash(last_block):
@@ -72,7 +72,7 @@ class Blockchain:
 
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
-            response = requests.get(f'http://{node}/chain')
+            response = requests.get('http://' + node + '/chain')
 
             if response.status_code == 200:
                 length = response.json()['length']
@@ -169,9 +169,9 @@ class Blockchain:
         :return: True if correct, False if not.
         """
 
-        guess = f'{last_proof}{proof}'.encode()
+        guess = (str(last_proof) + str(proof)).encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
-        return guess_hash[:4] == "0000"
+        return guess_hash[:5] == "00000"
 
 
 # Instantiate the Node
@@ -193,11 +193,11 @@ def mine():
 
     # We must receive a reward for finding the proof.
     # The sender is "0" to signify that this node has mined a new coin.
-    blockchain.new_transaction(
-        sender="0",
-        recipient=node_identifier,
-        amount=1,
-    )
+    # blockchain.new_transaction(
+    #     sender="0",
+    #     recipient=node_identifier,
+    #     amount=1,
+    # )
 
     # Forge the new Block by adding it to the chain
     previous_hash = blockchain.hash(last_block)
@@ -225,7 +225,7 @@ def new_transaction():
     # Create a new Transaction
     index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
 
-    response = {'message': f'Transaction will be added to Block {index}'}
+    response = {'message': 'Transaction will be added to Block ' + str(index)}
     return jsonify(response), 201
 
 
